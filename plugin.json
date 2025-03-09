@@ -1,0 +1,11 @@
+﻿{
+  "Group": "Misc",
+  "FriendlyName": "CacheLookup plugin",
+  "SystemName": "Misc.CacheLookup",
+  "Version": "4.90.1",
+  "SupportedVersions": [ "4.90" ],
+  "Author": "Muhammad Elsayed",
+  "DisplayOrder": 1,
+  "FileName": "Nop.Plugin.Misc.CacheLookup.dll",
+  "Description": "this is the plugin in which we are going to display all the cache values"
+}

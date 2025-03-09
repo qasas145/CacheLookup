@@ -1,0 +1,97 @@
+@model CacheItemSearchModel
+@{
+    Layout = "_ConfigurePlugin";
+}
+
+@{
+    const string hideSearchBlockAttributeName = "CacheItemsPage.HideSearchBlock";
+    var hideSearchBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), hideSearchBlockAttributeName);
+}
+
+
+<div class="content">
+	<div class="container-fluid">
+		<div class="form-horizontal">
+			<div class="cards-group">
+
+				<div class="card card-default card-search">
+					<div class="card-body">
+						<div class="row search-row @(!hideSearchBlock ? "opened" : "")" data-hideAttribute="@hideSearchBlockAttributeName">
+							<div class="search-text">@T("Admin.Common.Search")</div>
+							<div class="icon-search"><i class="fas fa-magnifying-glass" aria-hidden="true"></i></div>
+							<div class="icon-collapse"><i class="far fa-angle-@(!hideSearchBlock ? "up" : "down")" aria-hidden="true"></i></div>
+						</div>
+
+						<div class="search-body @(hideSearchBlock ? "closed" : "")">
+							<div class="row">
+								<div class="col-md-5">
+									<div class="form-group row">
+										<div class="col-md-4">
+											<nop-label asp-for="ItemName" />
+										</div>
+										<div class="col-md-8">
+											<nop-editor asp-for="ItemName" />
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="text-center col-12">
+									<button type="button" id="search-cacheItems" class="btn btn-primary btn-search">
+										<i class="fas fa-magnifying-glass"></i>
+										@T("Admin.Common.Search")
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="card card-default">
+					<div class="card-body">
+						@await Html.PartialAsync("Table", new DataTablesModel
+						{
+							Name = "cache-grid",
+							UrlRead = new DataUrl("CacheItems", "CacheLookup", null),
+							UrlDelete = new DataUrl("DeleteCacheItem", "CacheLookup", null),
+							BindColumnNameActionDelete = nameof(CacheItemModel.Key),
+							SearchButtonId = "search-cacheItems",
+							Length = 4,
+							LengthMenu = "4",
+							Filters = new List<FilterParameter>
+							{
+								new FilterParameter(nameof(Model.ItemName)),
+							},
+							ColumnCollection = new List<ColumnProperty>{
+								new ColumnProperty(nameof(CacheItemModel.Key)){
+									Title = T("Key").Text
+								},
+								new ColumnProperty(nameof(CacheItemModel.Value))
+								{
+									Title = T("Value").Text
+								}
+								,new ColumnProperty(nameof(CacheItemModel.Size))
+								{
+									Title = T("Size in bytes").Text
+								},
+								new ColumnProperty(nameof(CacheItemModel.ExpiryDate))
+								{
+									Title = T("ExpiryDate(local time)").Text
+								},
+
+								new ColumnProperty(nameof(CacheItemModel.Key))
+								{
+									Title = T("Admin.Common.Edit").Text,
+									Width = "100",
+									Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+									ClassName = NopColumnClassDefaults.Button
+								}
+							}
+						})
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
